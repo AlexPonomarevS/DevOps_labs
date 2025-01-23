@@ -1,0 +1,45 @@
+---
+- name: Clone the django-locallibrary tutorial and deploy it in Docker
+  hosts: app
+  become: yes
+
+  tasks:
+    - name: Ensure Docker is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add vagrant to docker group
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+    - name: Ensure git is installed
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+
+    - name: Clone MDN Django local library tutorial
+      git:
+        repo: "https://github.com/mdn/django-locallibrary-tutorial.git"
+        dest: "/home/vagrant/django-locallibrary"
+        version: main
+
+    - name: Pull timurbabs/django image
+      community.docker.docker_image:
+        name: "timurbabs/django"
+        source: pull
+
+    - name: Install Django 4.2 in container
+      community.docker.docker_container:
+        name: "django_app"
+        image: "timurbabs/django"
+        state: started
+        ports:
+          - "8000:8000"
+        volumes:
+          - "/home/vagrant/django-locallibrary:/app"
+        command: /bin/sh -c "pip install django==4.2 python-dotenv && gunicorn locallibrary.wsgi:application --bind 0.0.0.0:8000"
