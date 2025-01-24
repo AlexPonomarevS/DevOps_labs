@@ -1,0 +1,9 @@
+---
+- name: Deploy Nginx and Docker
+  hosts: all
+  become: yes
+
+  roles:
+    - { role: docker, when: "'app' in group_names" }
+    - { role: nginx, when: "'web' in group_names" }
+
