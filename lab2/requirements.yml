@@ -1,0 +1,7 @@
+---
+roles:
+  - name: docker
+    src: https://github.com/AlexPonomarevS/DevOps_lab2.git
+    scm: git
+    version: main
+
