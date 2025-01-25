@@ -1,0 +1,7 @@
+---
+roles:
+  - name: docker
+    src: https://github.com/AlexPonomarevS/DevOps_openvpn.git
+    scm: git
+    version: main
+
